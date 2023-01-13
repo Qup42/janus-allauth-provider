@@ -8,8 +8,22 @@ from django.utils.module_loading import import_string
 from allauth_janus.helper import janus_sync_user_properties
 
 
+def save_jwt_token(id_token, sociallogin):
+    # Late loading is required here because the signals are imported very early.
+    from allauth_janus.models import JWTToken
+    if sociallogin.token and getattr(sociallogin.token, "jwttoken", None):
+        token = sociallogin.token.jwttoken
+        token.jwt_token = id_token
+    else:
+        token = JWTToken(jwt_token=id_token, social_token=sociallogin.token)
+    token.save()
+
+
 @receiver(social_account_updated)
 def social_account_updated(sender, request, sociallogin, **kwargs):
+
+    if "id_token" in request.session and sociallogin.is_existing:
+        save_jwt_token(request.session.pop("id_token"), sociallogin)
 
     if sociallogin.account.provider == "janus":
         janus_sync_user_properties(request, sociallogin)

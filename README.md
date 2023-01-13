@@ -56,6 +56,8 @@ SITE_ID = 1
 ```
 ## OIDC
 ```
+# JWT Tokens are stored iff Social Tokens are stored.
+SOCIALACCOUNT_STORE_TOKENS = True
 # Enable usage of OIDC endpoints to retrieve userinfo
 ALLAUTH_JANUS_OIDC = True 
 # The preferred way to configure allauth providers.
