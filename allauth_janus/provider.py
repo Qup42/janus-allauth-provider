@@ -1,7 +1,9 @@
+from allauth.socialaccount.providers.openid_connect.provider import OpenIDConnectProvider
+from django.conf import settings
+
 from allauth_janus.app_settings import ALLAUTH_JANUS_OIDC
 
 from allauth.socialaccount.providers.base import ProviderAccount
-from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
 
 from allauth_janus.helper import extract_username
 
@@ -12,9 +14,11 @@ class JanusAccount(ProviderAccount):
                                            super(JanusAccount, self).to_str())
 
 
-class JanusProvider(OAuth2Provider):
+class JanusProvider(OpenIDConnectProvider):
     id = 'janus'
     name = 'Janus'
+    _server_id = 'janus'
+    _server_url = settings.ALLAUTH_JANUS_URL + "/o"
     account_class = JanusAccount
 
     def get_default_scope(self):

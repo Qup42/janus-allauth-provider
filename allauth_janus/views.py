@@ -1,10 +1,10 @@
 from allauth.socialaccount import app_settings as allauth_app_settings
+from allauth.socialaccount.providers.openid_connect.views import OpenIDConnectAdapter
 from allauth_janus.app_settings import ALLAUTH_JANUS_PROFILE_URL
 
 import requests
 
 from allauth.socialaccount.providers.oauth2.views import (
-    OAuth2Adapter,
     OAuth2CallbackView,
     OAuth2LoginView,
 )
@@ -14,7 +14,7 @@ from .models import JWTToken
 from .provider import JanusProvider
 
 
-class JanusOAuth2Adapter(OAuth2Adapter):
+class JanusOAuth2Adapter(OpenIDConnectAdapter):
     provider_id = JanusProvider.id
     access_token_url = settings.ALLAUTH_JANUS_URL + '/o/token/'
     authorize_url = settings.ALLAUTH_JANUS_URL + '/o/authorize/'
