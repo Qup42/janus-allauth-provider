@@ -58,6 +58,9 @@ SITE_ID = 1
 ```
 # JWT Tokens are stored iff Social Tokens are stored.
 SOCIALACCOUNT_STORE_TOKENS = True
+# Use OIDC RP-Initiated Logout to logout users.
+# Remember to use the view 'account_logout' (allauth) instead of 'logout' (django) to logout.
+ALLAUTH_JANUS_LOGOUT = 'remote_oidc'
 # Enable usage of OIDC endpoints to retrieve userinfo
 ALLAUTH_JANUS_OIDC = True 
 # The preferred way to configure allauth providers.
