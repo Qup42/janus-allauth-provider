@@ -22,6 +22,10 @@ class JanusOAuth2Adapter(OpenIDConnectAdapter):
     supports_state = True
     redirect_uri_protocol = settings.ALLAUTH_JANUS_REDIRECT_PROTOCOL
 
+    @property
+    def end_session_url(self):
+        return self.openid_config.get("end_session_endpoint", None)
+
     def complete_login(self, request, app, token, **kwargs):
         response = requests.get(
             self.profile_url,
