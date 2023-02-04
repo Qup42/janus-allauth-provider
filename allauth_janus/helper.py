@@ -1,6 +1,7 @@
 from allauth_janus.app_settings import ALLAUTH_JANUS_OIDC
 from django.contrib.auth import get_user_model
 
+
 def janus_sync_user_properties(request, sociallogin):
     # There are Django Users and Allauth SocialAccounts.
     # If a login with Janus has already happened, `sociallogin.user` (User)

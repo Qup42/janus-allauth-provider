@@ -46,7 +46,7 @@ LOGIN_URL = "/accounts/janus/login/"
 #ALLAUTH_JANUS_PRE_SOCIAL_CALLBACK = 'allauth_janus.helper.janus_sync_user_properties'  # (default)
 ALLAUTH_JANUS_URL = 'https://sso.example.com/oauth2'
 ALLAUTH_JANUS_REDIRECT_PROTOCOL = 'http'
-ALLAUTH_JANUS_REMOTE_LOGOUT = True
+ALLAUTH_JANUS_LOGOUT = 'remote_custom'
 
 # disable default linking by username on signup behavior (if account already exists)
 # ALLAUTH_JANUS_PRE_SOCIAL_CALLBACK=allauth_janus.signals.noop  
@@ -56,6 +56,11 @@ SITE_ID = 1
 ```
 ## OIDC
 ```
+# JWT Tokens are stored iff Social Tokens are stored.
+SOCIALACCOUNT_STORE_TOKENS = True
+# Use OIDC RP-Initiated Logout to logout users.
+# Remember to use the view 'account_logout' (allauth) instead of 'logout' (django) to logout.
+ALLAUTH_JANUS_LOGOUT = 'remote_oidc'
 # Enable usage of OIDC endpoints to retrieve userinfo
 ALLAUTH_JANUS_OIDC = True 
 # The preferred way to configure allauth providers.

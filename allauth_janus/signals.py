@@ -6,10 +6,25 @@ from allauth.socialaccount.signals import social_account_updated, pre_social_log
 from django.utils.module_loading import import_string
 
 from allauth_janus.helper import janus_sync_user_properties
+from allauth_janus.app_settings import ALLAUTH_JANUS_LOGOUT
+
+
+def save_jwt_token(id_token, sociallogin):
+    # Late loading is required here because the signals are imported very early.
+    from allauth_janus.models import JWTToken
+    if sociallogin.token and getattr(sociallogin.token, "jwttoken", None):
+        token = sociallogin.token.jwttoken
+        token.jwt_token = id_token
+    else:
+        token = JWTToken(jwt_token=id_token, social_token=sociallogin.token)
+    token.save()
 
 
 @receiver(social_account_updated)
 def social_account_updated(sender, request, sociallogin, **kwargs):
+
+    if "id_token" in request.session and sociallogin.is_existing:
+        save_jwt_token(request.session.pop("id_token"), sociallogin)
 
     if sociallogin.account.provider == "janus":
         janus_sync_user_properties(request, sociallogin)
@@ -34,9 +49,7 @@ def user_logged_out(sender, request, user, **kwargs):
     from allauth.socialaccount.models import SocialToken
     token = SocialToken.objects.filter(account__user=user, account__provider='janus').first()
 
-    remote_logout = bool(getattr(settings, 'ALLAUTH_JANUS_REMOTE_LOGOUT', False))
-
-    if remote_logout and token:
+    if ALLAUTH_JANUS_LOGOUT == "remote_custom" and token:
         url = settings.ALLAUTH_JANUS_URL + '/o/logout/'
         try:
             response = requests.get(
